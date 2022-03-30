@@ -1,0 +1,20 @@
+[
+    {"title": "Huhn", "height": 40, "weight": 4, "age": 25},
+    {"title": "Katze", "height": 45, "weight": 20, "age": 14},
+    {"title": "Schwein", "height": 150, "weight": 100, "age": 10},
+    {"title": "Papagei", "height": 40, "weight": 0.5, "age": 50},
+    {"title": "Braunbär", "height": 110, "weight": 150, "age": 25},
+    {"title": "Fliege", "height": 0.65, "weight": 0.0008, "age": 0.057},
+    {"title": "Walhai", "height": 1450, "weight": 15000, "age": 100},
+    {"title": "Löwe", "height": 110, "weight": 250, "age": 20},
+    {"title": "Delfin", "height": 1000, "weight": 10000, "age": 40},
+    {"title": "Erdmännchen", "height": 25, "weight": 0.9, "age": 10},
+    {"title": "Marienkäfer", "height": 0.065, "weight": 0.0005, "age": 0.78},
+    {"title": "Lama", "height": 200, "weight": 150, "age": 22.5},
+    {"title": "Schildkröte", "height": 61, "weight": 400, "age": 100},
+    {"title": "Elefant", "height": 350, "weight": 3500, "age": 60},
+    {"title": "Schmetterling", "height": 7, "weight": 0.003, "age": 0.057},
+    {"title": "Wanderfalke", "height": 110, "weight": 0.9, "age": 16.5},
+    {"title": "Maus", "height": 15, "weight": 0.008, "age": 13},
+    {"title": "Krokodil", "height": 75, "weight": 550, "age": 45}
+]
