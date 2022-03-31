@@ -14,6 +14,7 @@ class Game:
     amount: int
 
     def ask_for_names(self):
+        self.color_codes = (99 + random.randrange(0, 10), 37)
         self.player_names = []
         self.amount = int(input("Wie viele Spieler wollen spielen? "))
         if self.amount < 2:
@@ -22,7 +23,11 @@ class Game:
             )
             exit(1)
         for i in range(self.amount):
-            self.player_names.append(input(f"Gib den Namen von Spieler {i+1} ein: "))
+            self.player_names.append(
+                input(
+                    f"Gib den Namen von {colors.color(self.color_codes[0]+i*self.color_codes[1])}Spieler {i+1}{colors.END} ein: "
+                )
+            )
 
     def create_stack(self):
         self.card_stack = list()
@@ -50,6 +55,17 @@ class Game:
         for i, card in enumerate(self.card_stack):
             self.player_stacks[i % self.amount].append(card)
 
+    def player_str(self, idx):
+        sequence = (
+            colors.BOLD
+            + colors.color(
+                colors.color(self.color_codes[0] + idx * self.color_codes[1])
+            )[:-1]
+            + self.player_names[idx]
+            + colors.END
+        )
+        return sequence
+
     def play(self):
         self.ask_for_names()
         self.create_stack()
@@ -58,20 +74,28 @@ class Game:
 
         current_player = random.randrange(0, self.amount)
 
-
         while self.amount > 1:
             player_name = self.player_names[current_player]
             player_card = self.player_stacks[current_player][-1]
 
             print()
-            print(f"{player_name}, du bist dran. Du hast die folgende Karte (von {self.player_stacks[current_player].__len__()}):")
+            # print(
+            #     colors.color(242)
+            #     + " - ".join(
+            #         [card.title for card in self.player_stacks[current_player][-4:-2]][ ::-1 ]
+            #     )
+            #     + colors.END
+            # )
+            print(
+                f"{self.player_str(current_player)}, du bist dran. Du hast die folgende Karte (von {self.player_stacks[current_player].__len__()}):"
+            )
             print(player_card)
             attr = {"a": "height", "b": "weight", "c": "age"}[
                 input(f"Wähle eines der Attribute mithilfe des Buchstabens: ")
             ]
             values = [(current_player, getattr(player_card, attr))]
 
-            print("\n"*2)
+            print("\n" * 2)
 
             for player in range(self.amount):
                 if player == current_player:
@@ -80,28 +104,54 @@ class Game:
                 value = getattr(card, attr)
                 values.append((player, value))
 
-                time.sleep(.2)
-                print(f"{self.player_names[player]} hat: {card.title} - {card.attr_str(attr)}")
+                time.sleep(0.2)
+                print(
+                    f"{self.player_str(player)} hat: {card.title} - {card.attr_str(attr)}"
+                )
+            print()
 
-            winning_player = max(values, key=lambda t: t[1])[0]
-            if winning_player == current_player:
-                print(f"Du hast {colors.GREEN}{colors.BOLD}gewonnen{colors.END} und bist nun noch einmal dran.")
+            winning = sorted(values, key=lambda t: t[1], reverse=True)
+            if winning[0][1] == winning[1][1]:
+                print(
+                    f"Es gibt aktuell ein {colors.color(8)}Unentschieden{colors.END}. Weil kein Stich einprogrammiert ist, werden beide Karten zurückgelegt."
+                )
+                for stack in self.player_stacks:
+                    stack.insert(0, stack.pop())
+                continue
+            elif winning[0][0] == current_player:
+                print(
+                    f"Du hast {colors.GREEN}{colors.BOLD}gewonnen{colors.END} und bist nun noch einmal dran."
+                )
             else:
-                print(f"Du hast {colors.RED}{colors.BOLD}verloren{colors.END}, {self.player_names[winning_player]} hat diese Runde gewonnen.")
+                print(
+                    f"Du hast {colors.RED}{colors.BOLD}verloren{colors.END}, {self.player_str(winning[0][0])} hat diese Runde gewonnen."
+                )
+                input(
+                    f"Bitte gib das Gerät nun an {self.player_str(winning[0][0])}, drücke <Enter>, um fortzufahren..."
+                )
+                print("\n" * 28)
             time.sleep(0.6)
 
-            returned = [self.player_stacks[player].pop() for player in range(self.amount)]
-            self.player_stacks[winning_player] = returned + self.player_stacks[winning_player]
+            returned = [
+                self.player_stacks[player].pop() for player in range(self.amount)
+            ]
+            self.player_stacks[winning[0][0]] = (
+                returned + self.player_stacks[winning[0][0]]
+            )
 
-            current_player = winning_player
+            current_player = winning[0][0]
 
             if not all([len(stack) for stack in self.player_stacks]):
-                losing_player = min(enumerate(self.player_stacks), key=lambda s:s[1])[0]
+                losing_player = min(enumerate(self.player_stacks), key=lambda s: s[1])[
+                    0
+                ]
                 print()
-                print(f"{self.player_names[losing_player]}, du hast keine Karten mehr und bist ausgeschieden.")
+                print(
+                    f"{self.player_names[losing_player]}, du hast keine Karten mehr und bist ausgeschieden."
+                )
 
                 self.player_stacks.remove(losing_player)
                 self.player_names.remove(losing_player)
                 self.amount -= 1
 
-        print(f"{'n'*3}{self.player_names[0]} hat das Spiel gewonnen!")
+        print(f"{'n'*3}{self.player_str(0)} hat das Spiel gewonnen!")
